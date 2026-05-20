@@ -35,9 +35,6 @@ export default function Settings() {
   // temp value while editing
   const [editValue, setEditValue] = useState("");
 
-  // mock settings states
-  const [notifications, setNotifications] = useState(true);
-
   // Helper to get initials
   function getInitials(name: string) {
     if (!name) return "U";
@@ -283,46 +280,11 @@ export default function Settings() {
 
         {/* ===== SETTINGS TAB ===== */}
         <TabsContent value="settings" className="space-y-6 outline-none">
-          {/* Preferences */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-muted-foreground px-1 uppercase tracking-wider">Preferences</h3>
-            <Card className="shadow-none border-border/60 overflow-hidden">
-              <div className="divide-y divide-border/40">
-                <div className="flex items-center justify-between p-4 px-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                      <Bell className="w-4 h-4 text-blue-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Push Notifications</p>
-                      <p className="text-[11px] text-muted-foreground">Medication and reading reminders</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => setNotifications(!notifications)}
-                    className={`w-11 h-6 rounded-full transition-colors relative ${notifications ? 'bg-primary' : 'bg-muted-foreground/30'}`}
-                  >
-                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200 ${notifications ? 'translate-x-5' : 'translate-x-0'}`}></div>
-                  </button>
-                </div>
-              </div>
-            </Card>
-          </div>
-
           {/* Account */}
           <div className="space-y-3">
             <h3 className="text-sm font-medium text-muted-foreground px-1 uppercase tracking-wider">Account</h3>
             <Card className="shadow-none border-border/60 overflow-hidden">
               <div className="divide-y divide-border/40">
-                <button className="w-full flex items-center justify-between p-4 px-5 hover:bg-muted/30 transition-colors text-left">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                      <MonitorSmartphone className="w-4 h-4 text-foreground" />
-                    </div>
-                    <p className="text-sm font-medium">Connected Devices</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                </button>
 
                 <button 
                   onClick={handleLogout}
