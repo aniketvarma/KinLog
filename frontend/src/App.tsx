@@ -13,12 +13,14 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import { Toaster } from "@/components/ui/sonner";
 import Welcome from "./pages/Welcome";
 
+import Landing from "./pages/Landing";
+
 function App() {
   return (
     <div className="min-h-screen bg-background font-sans text-foreground w-full overflow-x-hidden">
       <Toaster duration={9000} />
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route element={<ProtectedRoute />}>
