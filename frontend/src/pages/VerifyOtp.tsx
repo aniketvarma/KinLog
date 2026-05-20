@@ -8,6 +8,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -129,7 +130,7 @@ export default function VerifyOtp() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm shadow-lg border-0 mx-auto">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Check your email</CardTitle>
@@ -155,19 +156,19 @@ export default function VerifyOtp() {
             onClick={handleVerify}
             disabled={isVerifying || code.length !== 6}
           >
-            {isVerifying ? "Verifying" : "Verify"}
+            {isVerifying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify"}
           </Button>
 
           <button
             type="button"
-            className="text-sm text-blue-600 hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
+            className="text-sm text-primary hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
             onClick={handleResend}
             disabled={resendCooldown > 0 || isResending}
           >
             {resendCooldown > 0
               ? `Resend code in ${resendCooldown}s`
               : isResending
-                ? "Resending..."
+                ? <><Loader2 className="w-4 h-4 animate-spin inline-block mr-2" />Resending...</>
                 : "Resend code"}
           </button>
 

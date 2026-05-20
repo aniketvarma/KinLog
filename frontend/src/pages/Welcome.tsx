@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -49,7 +50,7 @@ export default function Welcome() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm shadow-lg border-0 mx-auto">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">👋</div>
@@ -72,7 +73,7 @@ export default function Welcome() {
             onClick={handleSubmit}
             disabled={isSaving || !name.trim()}
           >
-            {isSaving ? "Saving..." : "Continue to dashboard"}
+            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : "Continue to dashboard"}
           </Button>
         </CardContent>
       </Card>

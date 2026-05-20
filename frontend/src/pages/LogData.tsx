@@ -1,58 +1,31 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BloodPressureForm from "@/components/forms/BloodPressureForm";
 import GlucoseForm from "@/components/forms/GlucoseForm";
-
-const options = [
-  {
-    id: "blood-pressure",
-    label: "Blood Pressure",
-    description: "Systolic & Diastolic",
-  },
-  { id: "glucose", label: "Glucose", description: "Blood sugar level" },
-];
+import { Heart, Droplets } from "lucide-react";
 
 export default function LogData() {
-  const [selected, setSelected] = useState<string | null>(null);
-
-  if (selected) {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => setSelected(null)}>
-            Back
-          </Button>
-          <h1 className="text-2xl font-bold">
-            {options.find((o) => o.id === selected)?.label}
-          </h1>
-        </div>
-        {selected === "blood-pressure" && <BloodPressureForm />}
-
-        {selected === "glucose" && <GlucoseForm />}
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Log Data</h1>
-      <div className="grid grid-cols-2 gap-4">
-        {options.map((option) => (
-          <Card
-            key={option.id}
-            className="cursor-pointer hover:border-primary transition-colors"
-            onClick={() => setSelected(option.id)}
-          >
-            <CardContent className="p-6">
-              <h2 className="text-lg font-semibold">{option.label}</h2>
-              <p className="text-sm text-muted-foreground">
-                {option.description}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <div className="max-w-lg mx-auto">
+      <Tabs defaultValue="blood-pressure" className="w-full">
+        <TabsList className="bg-muted w-full p-1 rounded-xl mb-6">
+          <TabsTrigger value="blood-pressure" className="flex-1 rounded-lg gap-2">
+            <Heart className="w-4 h-4" />
+            Blood Pressure
+          </TabsTrigger>
+          <TabsTrigger value="glucose" className="flex-1 rounded-lg gap-2">
+            <Droplets className="w-4 h-4" />
+            Glucose
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="blood-pressure" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <BloodPressureForm />
+        </TabsContent>
+
+        <TabsContent value="glucose" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <GlucoseForm />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

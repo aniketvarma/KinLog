@@ -15,7 +15,7 @@ import Welcome from "./pages/Welcome";
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen bg-background font-sans text-foreground w-full overflow-x-hidden">
       <Toaster duration={9000} />
       <Routes>
         <Route path="/" element={<Login />} />
@@ -33,7 +33,7 @@ function App() {
           </Route>
         </Route>
       </Routes>
-    </>
+    </div>
   );
 }
 
