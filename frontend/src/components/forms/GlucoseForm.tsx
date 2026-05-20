@@ -8,30 +8,11 @@ import { Loader2, CheckCircle2 } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL;
 
-function getGlucoseStatus(value: string, type: "fasting" | "post_meal") {
-  const num = Number(value);
-  if (!value || isNaN(num) || num <= 0) return null;
-
-  if (type === "fasting") {
-    if (num < 70) return { text: "Low", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400" };
-    if (num >= 126) return { text: "Diabetic Range", color: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400" };
-    if (num >= 100) return { text: "Pre-diabetic", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400" };
-    return { text: "Normal", color: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" };
-  } else {
-    if (num < 70) return { text: "Low", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400" };
-    if (num >= 200) return { text: "Diabetic Range", color: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400" };
-    if (num >= 140) return { text: "Pre-diabetic", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400" };
-    return { text: "Normal", color: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" };
-  }
-}
-
 export default function GlucoseForm() {
   const [reading, setReading] = useState("");
   const [type, setType] = useState<"fasting" | "post_meal">("fasting");
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  const status = getGlucoseStatus(reading, type);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

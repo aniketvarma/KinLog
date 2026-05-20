@@ -1,14 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  HeartPulse, 
-  Activity, 
-  LineChart, 
-  ShieldCheck, 
-  Bell, 
+import {
+  HeartPulse,
+  Activity,
+  LineChart,
+  ShieldCheck,
   Smartphone,
   ChevronRight,
-  Droplets
 } from "lucide-react";
 
 export default function Landing() {

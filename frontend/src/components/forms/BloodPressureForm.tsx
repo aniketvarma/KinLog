@@ -8,32 +8,12 @@ import { Loader2, CheckCircle2 } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL;
 
-function getStatusForValue(value: string, type: "systolic" | "diastolic") {
-  const num = Number(value);
-  if (!value || isNaN(num) || num <= 0) return null;
-
-  if (type === "systolic") {
-    if (num < 90) return { text: "Low", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400" };
-    if (num >= 140) return { text: "High", color: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400" };
-    if (num > 120) return { text: "Elevated", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400" };
-    return { text: "Normal", color: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" };
-  } else {
-    if (num < 60) return { text: "Low", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400" };
-    if (num >= 90) return { text: "High", color: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400" };
-    if (num > 80) return { text: "Elevated", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400" };
-    return { text: "Normal", color: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" };
-  }
-}
-
 export default function BloodPressureForm() {
   const [systolic, setSystolic] = useState("");
   const [diastolic, setDiastolic] = useState("");
   const [pulse, setPulse] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  const sysStatus = getStatusForValue(systolic, "systolic");
-  const diaStatus = getStatusForValue(diastolic, "diastolic");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
