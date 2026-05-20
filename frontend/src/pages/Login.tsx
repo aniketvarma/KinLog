@@ -78,7 +78,7 @@ export default function Login() {
         </div>
 
         <h1 className="text-3xl font-extrabold text-center text-foreground tracking-tight mb-2">
-          Log in or sign up
+          Log in
         </h1>
 
         <div className="flex flex-col gap-4">
