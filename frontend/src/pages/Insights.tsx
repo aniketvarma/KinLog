@@ -158,6 +158,10 @@ export default function Insights() {
   const fastingReadings = glucoseReadings.filter((r) => r.type === "fasting");
   const postMealReadings = glucoseReadings.filter((r) => r.type === "post_meal");
 
+  const uniqueBpDays = new Set(bpReadings.map(r => new Date(r.created_at).toDateString())).size;
+  const uniqueFastingDays = new Set(fastingReadings.map(r => new Date(r.created_at).toDateString())).size;
+  const uniquePostMealDays = new Set(postMealReadings.map(r => new Date(r.created_at).toDateString())).size;
+
   // BP Logic
   const latestBp = bpReadings.length > 0 ? bpReadings[bpReadings.length - 1] : null;
   // If either systolic or diastolic is bad, we take the worst status for the Hero
@@ -233,40 +237,47 @@ export default function Insights() {
           </CardContent>
         </Card>
 
-        {bpReadings.length > 10 && (
+        {uniqueBpDays > 10 ? (
           <Card className="shadow-none border-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Historical Trend</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={180}>
-                <LineChart data={bpReadings}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <LineChart data={bpReadings.slice(-30)}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                   <XAxis
                     dataKey="created_at"
-                    tickFormatter={(value) => new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={11}
-                    minTickGap={30}
+                    tickFormatter={(val) => new Date(val).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    stroke="var(--muted-foreground)"
+                    fontSize={12}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis 
-                    stroke="hsl(var(--muted-foreground))" 
+                    stroke="var(--muted-foreground)" 
                     fontSize={11} 
                     axisLine={false}
                     tickLine={false}
                     width={35}
+                    domain={['auto', 'auto']}
                   />
                   <Tooltip
                     labelFormatter={(value) => new Date(value).toLocaleString()}
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
                   />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', marginTop: '10px' }} />
-                  <Line type="monotone" dataKey="systolic" stroke="hsl(var(--foreground))" strokeWidth={2} dot={false} name="Systolic" />
-                  <Line type="monotone" dataKey="diastolic" stroke="hsl(var(--muted-foreground))" strokeWidth={2} strokeDasharray="4 4" dot={false} name="Diastolic" />
+                  <Line type="monotone" dataKey="systolic" stroke="var(--primary)" strokeWidth={2} dot={{ fill: "var(--primary)", r: 4 }} activeDot={{ r: 6 }} name="Systolic" />
+                  <Line type="monotone" dataKey="diastolic" stroke="var(--chart-2)" strokeWidth={2} dot={{ fill: "var(--chart-2)", r: 4 }} activeDot={{ r: 6 }} name="Diastolic" />
                 </LineChart>
               </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="shadow-none border-border border-dashed bg-muted/10">
+            <CardContent className="pt-6 flex flex-col items-center justify-center h-[200px] text-center text-muted-foreground">
+              <p className="font-medium text-foreground mb-1">More data needed</p>
+              <p className="text-sm">Log Blood Pressure on {11 - uniqueBpDays} more unique days to unlock trend charts.</p>
             </CardContent>
           </Card>
         )}
@@ -287,18 +298,24 @@ export default function Insights() {
             </CardContent>
           </Card>
           
-          {fastingReadings.length > 10 && (
+          {uniqueFastingDays > 10 ? (
             <Card className="shadow-none border-border">
               <CardContent className="pt-6">
                 <ResponsiveContainer width="100%" height={150}>
-                  <LineChart data={fastingReadings}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <LineChart data={fastingReadings.slice(-30)}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                     <XAxis dataKey="created_at" hide />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} axisLine={false} tickLine={false} width={35} />
+                    <YAxis stroke="var(--muted-foreground)" fontSize={11} axisLine={false} tickLine={false} width={35} domain={['auto', 'auto']} />
                     <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '8px', fontSize: '12px' }} />
-                    <Line type="monotone" dataKey="reading" stroke="hsl(var(--foreground))" strokeWidth={2} dot={false} name="Fasting" />
+                    <Line type="monotone" dataKey="reading" stroke="var(--foreground)" strokeWidth={2} dot={false} name="Fasting" />
                   </LineChart>
                 </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="shadow-none border-border border-dashed bg-muted/10">
+              <CardContent className="pt-6 flex flex-col items-center justify-center h-[100px] text-center text-muted-foreground">
+                <p className="text-sm">Log Fasting Glucose on {11 - uniqueFastingDays} more days to unlock charts.</p>
               </CardContent>
             </Card>
           )}
@@ -318,18 +335,24 @@ export default function Insights() {
             </CardContent>
           </Card>
 
-          {postMealReadings.length > 10 && (
+          {uniquePostMealDays > 10 ? (
             <Card className="shadow-none border-border">
               <CardContent className="pt-6">
                 <ResponsiveContainer width="100%" height={150}>
-                  <LineChart data={postMealReadings}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <LineChart data={postMealReadings.slice(-30)}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                     <XAxis dataKey="created_at" hide />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} axisLine={false} tickLine={false} width={35} />
+                    <YAxis stroke="var(--muted-foreground)" fontSize={11} axisLine={false} tickLine={false} width={35} domain={['auto', 'auto']} />
                     <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '8px', fontSize: '12px' }} />
-                    <Line type="monotone" dataKey="reading" stroke="hsl(var(--foreground))" strokeWidth={2} dot={false} name="Post-Meal" />
+                    <Line type="monotone" dataKey="reading" stroke="var(--foreground)" strokeWidth={2} dot={false} name="Post-Meal" />
                   </LineChart>
                 </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="shadow-none border-border border-dashed bg-muted/10">
+              <CardContent className="pt-6 flex flex-col items-center justify-center h-[100px] text-center text-muted-foreground">
+                <p className="text-sm">Log Post-Meal Glucose on {11 - uniquePostMealDays} more days to unlock charts.</p>
               </CardContent>
             </Card>
           )}
