@@ -108,11 +108,6 @@ export default function BloodPressureForm() {
               onChange={(e) => setSystolic(e.target.value)}
               className="text-lg h-12"
             />
-            {sysStatus && (
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full w-fit ${sysStatus.color} animate-in fade-in duration-200`}>
-                {sysStatus.text}
-              </span>
-            )}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -126,11 +121,6 @@ export default function BloodPressureForm() {
               onChange={(e) => setDiastolic(e.target.value)}
               className="text-lg h-12"
             />
-            {diaStatus && (
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full w-fit ${diaStatus.color} animate-in fade-in duration-200`}>
-                {diaStatus.text}
-              </span>
-            )}
           </div>
 
           <div className="flex flex-col gap-2">

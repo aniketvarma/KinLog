@@ -8,7 +8,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
-import { useTheme } from "@/components/theme-provider";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -35,10 +34,6 @@ export default function Settings() {
   const [editingField, setEditingField] = useState<EditableField | null>(null);
   // temp value while editing
   const [editValue, setEditValue] = useState("");
-
-  // theme state
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   // mock settings states
   const [notifications, setNotifications] = useState(true);
@@ -293,24 +288,6 @@ export default function Settings() {
             <h3 className="text-sm font-medium text-muted-foreground px-1 uppercase tracking-wider">Preferences</h3>
             <Card className="shadow-none border-border/60 overflow-hidden">
               <div className="divide-y divide-border/40">
-                <div className="flex items-center justify-between p-4 px-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Moon className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Dark Mode</p>
-                      <p className="text-[11px] text-muted-foreground">Adjust the app appearance</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => setTheme(isDark ? "light" : "dark")}
-                    className={`w-11 h-6 rounded-full transition-colors relative ${isDark ? 'bg-primary' : 'bg-muted-foreground/30'}`}
-                  >
-                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200 ${isDark ? 'translate-x-5' : 'translate-x-0'}`}></div>
-                  </button>
-                </div>
-
                 <div className="flex items-center justify-between p-4 px-5">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">

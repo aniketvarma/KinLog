@@ -123,11 +123,6 @@ export default function GlucoseForm() {
               onChange={(e) => setReading(e.target.value)}
               className="text-lg h-12"
             />
-            {status && (
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full w-fit ${status.color} animate-in fade-in duration-200`}>
-                {status.text}
-              </span>
-            )}
           </div>
 
           <Button type="submit" disabled={isSaving} size="lg" className="mt-2 h-12 text-base font-semibold">
