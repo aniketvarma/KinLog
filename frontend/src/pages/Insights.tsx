@@ -15,6 +15,36 @@ import {
 
 const API = import.meta.env.VITE_API_URL;
 
+function getDailyAverageBp(readings: any[]) {
+  const grouped = readings.reduce((acc, curr) => {
+    const date = new Date(curr.created_at).toDateString();
+    if (!acc[date]) acc[date] = { systolic: 0, diastolic: 0, count: 0, date: curr.created_at };
+    acc[date].systolic += curr.systolic;
+    acc[date].diastolic += curr.diastolic;
+    acc[date].count += 1;
+    return acc;
+  }, {} as Record<string, any>);
+  return Object.values(grouped).map((group: any) => ({
+    created_at: group.date,
+    systolic: Math.round(group.systolic / group.count),
+    diastolic: Math.round(group.diastolic / group.count),
+  })).sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+}
+
+function getDailyAverageGlucose(readings: any[]) {
+  const grouped = readings.reduce((acc, curr) => {
+    const date = new Date(curr.created_at).toDateString();
+    if (!acc[date]) acc[date] = { reading: 0, count: 0, date: curr.created_at };
+    acc[date].reading += curr.reading;
+    acc[date].count += 1;
+    return acc;
+  }, {} as Record<string, any>);
+  return Object.values(grouped).map((group: any) => ({
+    created_at: group.date,
+    reading: Math.round(group.reading / group.count),
+  })).sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+}
+
 // --- Helper Functions ---
 function getSysStatus(val: number) {
   if (val >= 140) return { text: "High", textColor: "text-red-600 dark:text-red-400", bgColor: "bg-red-100 dark:bg-red-900/30" };
@@ -162,6 +192,10 @@ export default function Insights() {
   const uniqueFastingDays = new Set(fastingReadings.map(r => new Date(r.created_at).toDateString())).size;
   const uniquePostMealDays = new Set(postMealReadings.map(r => new Date(r.created_at).toDateString())).size;
 
+  const avgBpReadings = getDailyAverageBp(bpReadings);
+  const avgFastingReadings = getDailyAverageGlucose(fastingReadings);
+  const avgPostMealReadings = getDailyAverageGlucose(postMealReadings);
+
   // BP Logic
   const latestBp = bpReadings.length > 0 ? bpReadings[bpReadings.length - 1] : null;
   // If either systolic or diastolic is bad, we take the worst status for the Hero
@@ -239,12 +273,13 @@ export default function Insights() {
 
         {uniqueBpDays > 10 ? (
           <Card className="shadow-none border-border">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
               <CardTitle className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Historical Trend</CardTitle>
+              <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md">Daily Average</span>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={180}>
-                <LineChart data={bpReadings.slice(-30)}>
+                <LineChart data={avgBpReadings.slice(-30)}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                   <XAxis
                     dataKey="created_at"
@@ -299,10 +334,11 @@ export default function Insights() {
           </Card>
           
           {uniqueFastingDays > 10 ? (
-            <Card className="shadow-none border-border">
+            <Card className="shadow-none border-border relative">
+              <span className="absolute top-4 right-4 text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-md z-10">Daily Avg</span>
               <CardContent className="pt-6">
                 <ResponsiveContainer width="100%" height={150}>
-                  <LineChart data={fastingReadings.slice(-30)}>
+                  <LineChart data={avgFastingReadings.slice(-30)}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                     <XAxis dataKey="created_at" hide />
                     <YAxis stroke="var(--muted-foreground)" fontSize={11} axisLine={false} tickLine={false} width={35} domain={['auto', 'auto']} />
@@ -336,10 +372,11 @@ export default function Insights() {
           </Card>
 
           {uniquePostMealDays > 10 ? (
-            <Card className="shadow-none border-border">
+            <Card className="shadow-none border-border relative">
+              <span className="absolute top-4 right-4 text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-md z-10">Daily Avg</span>
               <CardContent className="pt-6">
                 <ResponsiveContainer width="100%" height={150}>
-                  <LineChart data={postMealReadings.slice(-30)}>
+                  <LineChart data={avgPostMealReadings.slice(-30)}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                     <XAxis dataKey="created_at" hide />
                     <YAxis stroke="var(--muted-foreground)" fontSize={11} axisLine={false} tickLine={false} width={35} domain={['auto', 'auto']} />
