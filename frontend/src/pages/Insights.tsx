@@ -333,7 +333,7 @@ export default function Insights() {
             </CardContent>
           </Card>
           
-          {uniqueFastingDays > 10 ? (
+          {uniqueFastingDays > 10 && (
             <Card className="shadow-none border-border relative">
               <span className="absolute top-4 right-4 text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-md z-10">Daily Avg</span>
               <CardContent className="pt-6">
@@ -346,12 +346,6 @@ export default function Insights() {
                     <Line type="monotone" dataKey="reading" stroke="var(--foreground)" strokeWidth={2} dot={false} name="Fasting" />
                   </LineChart>
                 </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="shadow-none border-border border-dashed bg-muted/10">
-              <CardContent className="pt-6 flex flex-col items-center justify-center h-[100px] text-center text-muted-foreground">
-                <p className="text-sm">Log Fasting Glucose on {11 - uniqueFastingDays} more days to unlock charts.</p>
               </CardContent>
             </Card>
           )}
@@ -371,7 +365,7 @@ export default function Insights() {
             </CardContent>
           </Card>
 
-          {uniquePostMealDays > 10 ? (
+          {uniquePostMealDays > 10 && (
             <Card className="shadow-none border-border relative">
               <span className="absolute top-4 right-4 text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-md z-10">Daily Avg</span>
               <CardContent className="pt-6">
@@ -386,14 +380,19 @@ export default function Insights() {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-          ) : (
-            <Card className="shadow-none border-border border-dashed bg-muted/10">
-              <CardContent className="pt-6 flex flex-col items-center justify-center h-[100px] text-center text-muted-foreground">
-                <p className="text-sm">Log Post-Meal Glucose on {11 - uniquePostMealDays} more days to unlock charts.</p>
-              </CardContent>
-            </Card>
           )}
         </div>
+
+        {uniqueFastingDays <= 10 && uniquePostMealDays <= 10 && (
+          <div className="pt-2">
+            <Card className="shadow-none border-border border-dashed bg-muted/10">
+              <CardContent className="pt-6 flex flex-col items-center justify-center h-[160px] text-center text-muted-foreground">
+                <p className="font-medium text-foreground mb-1">More data needed</p>
+                <p className="text-sm">Log Fasting or Post-Meal Glucose for more unique days to unlock trend charts.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </TabsContent>
     </Tabs>
   );
