@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
+import { useTheme } from "@/components/theme-provider";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -35,8 +36,11 @@ export default function Settings() {
   // temp value while editing
   const [editValue, setEditValue] = useState("");
 
+  // theme state
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
   // mock settings states
-  const [darkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(true);
 
   // Helper to get initials
@@ -300,10 +304,10 @@ export default function Settings() {
                     </div>
                   </div>
                   <button 
-                    onClick={() => setDarkMode(!darkMode)}
-                    className={`w-11 h-6 rounded-full transition-colors relative ${darkMode ? 'bg-primary' : 'bg-muted-foreground/30'}`}
+                    onClick={() => setTheme(isDark ? "light" : "dark")}
+                    className={`w-11 h-6 rounded-full transition-colors relative ${isDark ? 'bg-primary' : 'bg-muted-foreground/30'}`}
                   >
-                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200 ${darkMode ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200 ${isDark ? 'translate-x-5' : 'translate-x-0'}`}></div>
                   </button>
                 </div>
 
