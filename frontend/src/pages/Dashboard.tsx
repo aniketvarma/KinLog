@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNav from "@/components/BottomNav";
 import { useEffect } from "react";

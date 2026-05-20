@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Pencil, X, Check, LogOut, Mail, User, Shield, CalendarIcon, Moon, Bell, MonitorSmartphone, ChevronRight } from "lucide-react";
+import { Pencil, Check, LogOut, Mail, User, Shield, CalendarIcon, Moon, Bell, MonitorSmartphone, ChevronRight } from "lucide-react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";

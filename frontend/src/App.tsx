@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 import VerifyOtp from "./pages/VerifyOtp";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
-import Profile from "./pages/Profile";
+
 import Calendar from "./pages/Reminders";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
@@ -18,7 +18,7 @@ import Landing from "./pages/Landing";
 function App() {
   return (
     <div className="min-h-screen bg-background font-sans text-foreground w-full overflow-x-hidden">
-      <Toaster duration={9000} />
+      <Toaster duration={5000} />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
@@ -27,7 +27,7 @@ function App() {
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Home />} />
-            <Route path="profile" element={<Profile />} />
+
             <Route path="reminders" element={<Calendar />} />
             <Route path="insights" element={<Insights />} />
             <Route path="settings" element={<Settings />} />

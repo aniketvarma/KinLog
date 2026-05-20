@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleLogin } from "@react-oauth/google";
@@ -74,11 +73,8 @@ export default function Login() {
   return (
     <div className="min-h-[100dvh] flex flex-col items-center pt-[10dvh] bg-background px-4 pb-6 w-full">
       <div className="w-full max-w-[280px] flex flex-col gap-6 mx-auto">
-        {/* LOGO BLOB */}
         <div className="flex justify-center mb-2">
-          <svg width="64" height="64" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="currentColor" className="text-foreground" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,81.3,-46.3C90.8,-33.5,96.8,-18.1,97.2,-2.5C97.7,13.1,92.5,28.8,83.4,42.4C74.3,55.9,61.2,67.3,46.6,74.5C32,81.7,16,84.7,0.7,83.4C-14.5,82.1,-29.1,76.5,-42.6,68.7C-56.2,60.9,-68.8,50.8,-77.3,37.9C-85.9,25,-90.4,9.3,-89.6,-6.1C-88.8,-21.4,-82.7,-36.4,-72.9,-48.5C-63,-60.7,-49.4,-70,-35.1,-76.7C-20.8,-83.4,-5.8,-87.5,9.1,-89.3C24,-91.1,30.6,-83.6,44.7,-76.4Z" transform="translate(100 100)" />
-          </svg>
+          <img src="/favicon.png" alt="KinLog" width={64} height={64} />
         </div>
 
         <h1 className="text-3xl font-extrabold text-center text-foreground tracking-tight mb-2">
@@ -96,11 +92,24 @@ export default function Login() {
             />
             {email && (
               <button
-                onClick={() => setEmail('')}
+                onClick={() => setEmail("")}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground bg-foreground/10 rounded-full p-1 transition-colors"
                 aria-label="Clear email"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
               </button>
             )}
           </div>
@@ -110,7 +119,11 @@ export default function Login() {
             onClick={handleSendCode}
             disabled={isSending || !email}
           >
-            {isSending ? <Loader2 className="w-6 h-6 animate-spin" /> : "Continue"}
+            {isSending ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              "Continue"
+            )}
           </Button>
 
           <div className="flex items-center gap-4 my-2 text-[15px] text-muted-foreground">

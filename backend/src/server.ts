@@ -29,7 +29,11 @@ const app = express();
 app.set("trust proxy", 1);
 
 // only allow requests from our frontend
-const allowedOrigins = ["http://localhost:5173", process.env.FRONT_END_URL!];
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONT_END_URL!,
+  "http://localhost:5175",
+];
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 // parse JSON request bodies
