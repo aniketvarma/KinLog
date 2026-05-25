@@ -2,6 +2,7 @@ import dns from "node:dns";
 dns.setDefaultResultOrder("ipv4first");
 
 import "dotenv/config";
+import logger from "./utils/logger.js";
 import express from "express";
 import cors from "cors";
 import { OAuth2Client } from "google-auth-library";
@@ -17,12 +18,16 @@ import {
   googleAuthSchema,
   requestOtpSchema,
   verifyOtpSchema,
+  pushSubscriptionSchema,
+  pushUnsubscribeSchema,
 } from "./schemas.js";
 import authenticate from "./middleware/authenticate.js"; // JWT auth middleware
 import rateLimit from "express-rate-limit";
 import bcrypt from "bcrypt";
 import { randomInt } from "crypto";
 import { sendOtpEmail } from "./utils/email.js";
+import { error } from "node:console";
+import { validate } from "node-cron";
 
 // create the app instance
 const app = express();
@@ -383,7 +388,7 @@ app.delete("/api/medicines/:id", authenticate, async (req, res) => {
   }
 });
 
-// ── REMINDERS ───────────────────────────────────────────
+// ── REMINDERS AND PUSH SUBSCRIPTION───────────────────────────────────────────
 
 app.post("/api/reminders", authenticate, async (req, res) => {
   const validationResult = reminderSchema.safeParse(req.body);
@@ -441,6 +446,64 @@ app.delete("/api/reminders/:id", authenticate, async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+app.post("/api/push/subscribe", authenticate, async (req, res) => {
+  const validationResult = pushSubscriptionSchema.safeParse(req.body);
+
+  if (!validationResult.success) {
+    return res
+      .status(400)
+      .json({ error: z.flattenError(validationResult.error) });
+  }
+
+  const endpoint = validationResult.data.endpoint;
+  const p256dh = validationResult.data.keys.p256dh;
+  const auth = validationResult.data.keys.auth;
+  const userId = (req as any).user.id;
+
+  try {
+    const row = await db.none(
+      `INSERT INTO push_subscriptions (endpoint, p256dh, auth, userId) Values($1, $2, $3, $4)
+    ON CONFLICT (endpoint) DO UDATE SET p256dh = EXCLUDED.p256dh auth = EXCLUDED.auth,
+             user_id = EXCLUDED.user_id`,
+      [endpoint, p256dh, auth, userId],
+    );
+
+    return res.status(201).json({ message: "Subscribed" });
+  } catch (error) {
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+app.delete("/api/push/subscribe/", authenticate, async (req, res) => {
+  const validationResult = pushUnsubscribeSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    return res
+      .status(400)
+      .json({ error: z.flattenError(validationResult.error) });
+  }
+
+  const [endpoint] = validationResult.data.endpoint;
+  const userId = (req as any).user.id;
+
+  try {
+    const row = await db.oneOrNone(
+      `SELECT * FROM push_subscriptions WHERE endpoint = $1`,
+      [endpoint],
+    );
+    if (!row) {
+      logger.warn({ userId, endpoint }, "unsubscribe: subscription not found");
+      return res.status(404).json({ error: "permission already disabled" });
+    }
+
+    await db.none(
+      `DELETE FROM push_subscriptions WHERE enpoint=$1 AND user_id=$2`,
+      [endpoint, userId],
+    );
+  } catch {
+    return res.status(500).json({ error: "Something went wrong" });
   }
 });
 
