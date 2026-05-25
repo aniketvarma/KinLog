@@ -16,9 +16,9 @@ export const medicineSchema = z.object({
 });
 
 export const reminderSchema = z.object({
-  date: z.string().min(1),
-  time: z.string().min(1),
   message: z.string().min(1).max(500),
+  due_at: z.iso.datetime(),
+  frequency: z.enum(["once", "daily", "weekly"]),
 });
 
 export const updateProfileFieldSchema = z.object({
@@ -37,4 +37,16 @@ export const requestOtpSchema = z.object({
 export const verifyOtpSchema = z.object({
   email: z.email().max(255),
   otp: z.string().regex(/^\d{6}$/),
+});
+
+export const pushSubscriptionSchema = z.object({
+  endpoint: z.url(),
+  keys: z.object({
+    p256dh: z.string().min(1),
+    auth: z.string().min(1),
+  }),
+});
+
+export const pushUnsubscribeSchema = z.object({
+  endpoint: z.url(),
 });

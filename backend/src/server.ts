@@ -395,12 +395,12 @@ app.post("/api/reminders", authenticate, async (req, res) => {
   }
 
   const userId = (req as any).user.id;
-  const { date, time, message } = validationResult.data;
+  const { due_at, frequency, message } = validationResult.data;
 
   try {
     await db.none(
-      `INSERT INTO reminders (user_id, date, time, message) VALUES ($1, $2, $3, $4)`,
-      [userId, date, time, message],
+      `INSERT INTO reminders (user_id, due_at, frequency, message) VALUES ($1, $2, $3, $4)`,
+      [userId, due_at, frequency, message],
     );
     res.status(201).json({ message: "Reminder saved" });
   } catch (error) {
