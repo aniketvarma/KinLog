@@ -403,11 +403,11 @@ app.post("/api/reminders", authenticate, async (req, res) => {
   const { due_at, frequency, message } = validationResult.data;
 
   try {
-    await db.none(
+    const reminder = await db.one(
       `INSERT INTO reminders (user_id, due_at, frequency, message) VALUES ($1, $2, $3, $4)`,
       [userId, due_at, frequency, message],
     );
-    res.status(201).json({ message: "Reminder saved" });
+    res.status(201).json({ reminder });
   } catch (error) {
     console.error("Error saving reminder:", error);
     res.status(500).json({ error: "Something went wrong" });
