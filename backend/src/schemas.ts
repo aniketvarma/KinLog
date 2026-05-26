@@ -17,7 +17,7 @@ export const medicineSchema = z.object({
 
 export const reminderSchema = z.object({
   message: z.string().min(1).max(500),
-  due_at: z.iso.datetime(),
+  due_at: z.string().datetime(),
   frequency: z.enum(["once", "daily", "weekly"]),
 });
 

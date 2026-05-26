@@ -27,8 +27,6 @@ import rateLimit from "express-rate-limit";
 import bcrypt from "bcrypt";
 import { randomInt } from "crypto";
 import { sendOtpEmail } from "./utils/email.js";
-import { error } from "node:console";
-import { validate } from "node-cron";
 
 // create the app instance
 const app = express();
@@ -405,7 +403,7 @@ app.post("/api/reminders", authenticate, async (req, res) => {
 
   try {
     const reminder = await db.one(
-      `INSERT INTO reminders (user_id, due_at, frequency, message) VALUES ($1, $2, $3, $4)`,
+      `INSERT INTO reminders (user_id, due_at, frequency, message) VALUES ($1, $2, $3, $4) RETURNING id, message, due_at, frequency, notified_at`,
       [userId, due_at, frequency, message],
     );
     res.status(201).json({ reminder });
@@ -420,7 +418,7 @@ app.get("/api/reminders", authenticate, async (req, res) => {
 
   try {
     const reminders = await db.any(
-      `SELECT id, date, time, message FROM reminders WHERE user_id = $1 ORDER BY date, time`,
+      `SELECT id, message, due_at, frequency FROM reminders WHERE user_id = $1 AND (notified_at IS NULL OR frequency != 'once') ORDER BY due_at`,
       [userId],
     );
     res.status(200).json({ reminders });
@@ -465,10 +463,9 @@ app.post("/api/push/subscribe", authenticate, async (req, res) => {
   const userId = (req as any).user.id;
 
   try {
-    const row = await db.none(
-      `INSERT INTO push_subscriptions (endpoint, p256dh, auth, userId) Values($1, $2, $3, $4)
-    ON CONFLICT (endpoint) DO UDATE SET p256dh = EXCLUDED.p256dh auth = EXCLUDED.auth,
-             user_id = EXCLUDED.user_id`,
+    await db.none(
+      `INSERT INTO push_subscriptions (endpoint, p256dh, auth, user_id) VALUES ($1, $2, $3, $4)
+       ON CONFLICT (endpoint) DO UPDATE SET p256dh = EXCLUDED.p256dh, auth = EXCLUDED.auth, user_id = EXCLUDED.user_id`,
       [endpoint, p256dh, auth, userId],
     );
 
@@ -478,7 +475,7 @@ app.post("/api/push/subscribe", authenticate, async (req, res) => {
   }
 });
 
-app.delete("/api/push/subscribe/", authenticate, async (req, res) => {
+app.delete("/api/push/subscribe", authenticate, async (req, res) => {
   const validationResult = pushUnsubscribeSchema.safeParse(req.body);
   if (!validationResult.success) {
     return res
@@ -486,7 +483,7 @@ app.delete("/api/push/subscribe/", authenticate, async (req, res) => {
       .json({ error: z.flattenError(validationResult.error) });
   }
 
-  const [endpoint] = validationResult.data.endpoint;
+  const endpoint = validationResult.data.endpoint;
   const userId = (req as any).user.id;
 
   try {
@@ -500,9 +497,11 @@ app.delete("/api/push/subscribe/", authenticate, async (req, res) => {
     }
 
     await db.none(
-      `DELETE FROM push_subscriptions WHERE enpoint=$1 AND user_id=$2`,
+      `DELETE FROM push_subscriptions WHERE endpoint=$1 AND user_id=$2`,
       [endpoint, userId],
     );
+
+    return res.status(200).json({ message: "Unsubscribed" });
   } catch {
     return res.status(500).json({ error: "Something went wrong" });
   }

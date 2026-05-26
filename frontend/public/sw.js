@@ -10,7 +10,7 @@ self.addEventListener("push", (event) => {
   const data = event.data?.json() ?? {};
 
   // Pull the fields the backend sent, with safe fallbacks.
-  const title = data.title || "Health Monitor";
+  const title = data.title || "KinLog";
   const options = {
     body: data.body || "",
     icon: data.icon || "/favicon.png",
@@ -26,7 +26,7 @@ self.addEventListener("notificationclick", (event) => {
   // Close the notification panel/banner.
   event.notification.close();
 
-  // If a /reminders tab is already open, focus it; otherwise open a new tab.
+  // If a /dashboard/reminders tab is already open, focus it; otherwise open a new tab.
   // Prevents stacking duplicate tabs when the user clicks multiple notifications.
   event.waitUntil(
     (async () => {
@@ -38,15 +38,15 @@ self.addEventListener("notificationclick", (event) => {
         includeUncontrolled: true,
       });
 
-      // Look for an existing /reminders tab to focus.
-      const existing = allClients.find((c) => c.url.endsWith("/reminders"));
+      // Look for an existing /dashboard/reminders tab to focus.
+  const existing = allClients.find((c) => c.url.endsWith("/dashboard/reminders"));
 
       if (existing) {
         // Bring the existing tab to the front instead of opening a duplicate.
         await existing.focus();
       } else {
-        // No /reminders tab open — open a new one.
-        await clients.openWindow("/reminders");
+        // No /dashboard/reminders tab open — open a new one.
+        await clients.openWindow("/dashboard/reminders");
       }
     })(),
   );

@@ -24,7 +24,7 @@ export function startReminderCron() {
          WHERE due_at <= NOW() AND notified_at IS NULL`,
       );
 
-      dues.forEach((due) => async () => {
+      for (const due of dues) {
         const subs = await db.any(
           `SELECT endpoint, p256dh, auth
            FROM push_subscriptions WHERE user_id = $1`,
@@ -32,12 +32,12 @@ export function startReminderCron() {
         );
 
         const payload = JSON.stringify({
-          title: "Health Monitor",
+          title: "KinLog",
           body: due.message,
           icon: "/favicon.png",
         });
 
-        subs.forEach((sub) => async () => {
+        for (const sub of subs) {
           try {
             await webpush.sendNotification(
               {
@@ -57,7 +57,7 @@ export function startReminderCron() {
               console.error("Push send failed:", err.statusCode, err.body);
             }
           }
-        });
+        }
 
         if (due.frequency === "once") {
           await db.none(
@@ -84,7 +84,7 @@ export function startReminderCron() {
             [due.id],
           );
         }
-      });
+      }
     } catch (err) {
       logger.error("Cron tick failed:");
     } finally {
