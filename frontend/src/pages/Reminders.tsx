@@ -15,11 +15,15 @@ import {
 
 const API = import.meta.env.VITE_API_URL;
 
-function urlBase64ToUint8Array(base64: string): Uint8Array {
+function urlBase64ToUint8Array(base64: string) {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
   const b64 = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
   const raw = atob(b64);
-  return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)));
+  const arr = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) {
+    arr[i] = raw.charCodeAt(i);
+  }
+  return arr;
 }
 
 /* ─── Analog Clock Face Component ─── */
@@ -109,7 +113,7 @@ function ClockFace({
     <svg
       ref={svgRef}
       viewBox={`0 0 ${SIZE} ${SIZE}`}
-      className="w-full max-w-[220px] mx-auto touch-none select-none"
+      className="w-full max-w-[180px] sm:max-w-[220px] mx-auto touch-none select-none"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -197,7 +201,7 @@ export default function Reminders() {
   }, []);
 
   // Use a ref so setTimeout always calls the latest version
-  const handleEnableNotificationsRef = useRef<() => Promise<void>>();
+  const handleEnableNotificationsRef = useRef<(() => Promise<void>) | null>(null);
 
   const handleEnableNotifications = useCallback(async () => {
     try {
@@ -394,8 +398,6 @@ export default function Reminders() {
     setClockMode("hour");
   }
 
-  // Format display time
-  const displayTime = `${hour}:${String(minute).padStart(2, "0")} ${ampm}`;
 
   return (
     <div className="flex flex-col items-center gap-6 pb-20 w-full px-2 sm:px-4">
@@ -485,7 +487,7 @@ export default function Reminders() {
 
       {/* dialog for setting a reminder */}
       <Dialog open={isPopUpOpen} onOpenChange={setIsPopUpOpen}>
-        <DialogContent className="max-w-sm sm:max-w-md">
+        <DialogContent className="max-w-sm sm:max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Set Reminder</DialogTitle>
           </DialogHeader>
@@ -542,7 +544,7 @@ export default function Reminders() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setClockMode("hour")}
-                  className={`text-4xl font-bold transition-colors px-2 py-1 rounded-lg ${
+                  className={`text-3xl sm:text-4xl font-bold transition-colors px-2 py-1 rounded-lg ${
                     clockMode === "hour"
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground"
@@ -550,10 +552,10 @@ export default function Reminders() {
                 >
                   {hour}
                 </button>
-                <span className="text-4xl font-bold text-muted-foreground">:</span>
+                <span className="text-3xl sm:text-4xl font-bold text-muted-foreground">:</span>
                 <button
                   onClick={() => setClockMode("minute")}
-                  className={`text-4xl font-bold transition-colors px-2 py-1 rounded-lg ${
+                  className={`text-3xl sm:text-4xl font-bold transition-colors px-2 py-1 rounded-lg ${
                     clockMode === "minute"
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground"
