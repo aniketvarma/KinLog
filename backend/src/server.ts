@@ -2,6 +2,7 @@ import dns from "node:dns";
 dns.setDefaultResultOrder("ipv4first");
 
 import "dotenv/config";
+import { startReminderCron } from "./cron.js";
 import logger from "./utils/logger.js";
 import express from "express";
 import cors from "cors";
@@ -555,4 +556,5 @@ app.patch("/api/profile", authenticate, async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  startReminderCron();
 });
