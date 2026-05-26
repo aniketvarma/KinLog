@@ -334,13 +334,16 @@ export default function Reminders() {
 
     const due_at = new Date(`${dateStr}T${timeStr24}:00`).toISOString();
 
+    const payload = { message, due_at, frequency: "once" };
+    console.log("Saving reminder payload:", payload);
+
     const response = await fetch(`${API}/api/reminders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ message, due_at, frequency: "once" }),
+      body: JSON.stringify(payload),
     });
 
     if (response.ok) {
@@ -358,7 +361,9 @@ export default function Reminders() {
         }, 800);
       }
     } else if (response.status === 400) {
-      toast.error("Invalid input. Please check your values.");
+      const errBody = await response.json().catch(() => ({}));
+      console.error("400 validation error:", errBody);
+      toast.error(`Invalid input: ${JSON.stringify(errBody.error ?? errBody)}`);
     } else {
       toast.error("Something went wrong.");
     }
