@@ -8,7 +8,7 @@ Track your health vitals in one place. Log blood pressure, glucose levels, and m
 
 ## What It Does
 
-**Sign in** — Continue with Google, or request a 6-digit code over email. _(Note: email OTP login does **not** work on the live deployment — Render's free tier blocks outbound SMTP, so Gmail can't send the code. Google sign-in works as usual.)_
+**Sign in** — Continue with Google, or request a 6-digit code over email.
 
 **Log vitals daily** — Record blood pressure (systolic / diastolic / pulse) and glucose readings in seconds.
 
@@ -36,7 +36,7 @@ Track your health vitals in one place. Log blood pressure, glucose levels, and m
 - JWT auth (`jsonwebtoken`) with a custom `authenticate` middleware
 - Zod for request validation
 - `google-auth-library` to verify Google ID tokens
-- Nodemailer (Gmail SMTP) to send OTP codes, `bcrypt` to hash them
+- Brevo API (`@getbrevo/brevo`) to send OTP codes, `bcrypt` to hash them
 - `express-rate-limit` to throttle OTP requests per email and per IP
 
 **Hosting**
